@@ -1,0 +1,13 @@
+/* Inbuilt member/2 function */
+member(X,[X|T]).
+member(X,[H|T]):- member(X,T).
+
+/* dfs base clause to check the goal state */
+dfs(S, Checked, Path) :- goal(Path,S).
+
+/* recursive dfs with a check for visited cells */
+dfs(S, Checked, [SPath|S2Path]) :-
+    connect(SPath,S,S2),
+    \+member(S2, Checked),
+    dfs(S2, [S2|Checked], S2Path).
+

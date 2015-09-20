@@ -1,0 +1,23 @@
+:-import parsort/4 from machine.
+/* Inbuilt member/2 function */
+member(X,[X|T]).
+member(X,[H|T]):- member(X,T).
+
+/* Inbuilt append/3 function */
+append([ ], L, L).
+append([H|L1], L2, [H|L3]):- append(L1, L2, L3). 
+
+/* successor function to generate non-repetitive successors with Key as the heuristic value*/
+successors([S|Path], NewPaths):- findall([S2, Dir, Key, S|Path],
+			    (connect(Dir, S, S2, Key), not(member(S2,[S|Path]))),
+			     NewPaths).
+
+/* A* base clause to check the goal state */
+astar1([[S|Path]|_], [S|Path]) :- goal(Dir,S).
+
+/* recursive A* with a sorted queue using inbuilt parsort/4 to save the path */
+astar1([Path|Paths], Full_Path) :-
+  successors(Path, NewPaths),
+   append(Paths, NewPaths, Queue),
+   parsort(Queue, asc, 1, Sorted),
+   astar1(Sorted, Full_Path).

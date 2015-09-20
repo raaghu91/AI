@@ -1,0 +1,29 @@
+:- op(700,xfy,'$').
+
+member(X,[X|T]).
+member(X,[H|T]):- member(X,T).
+
+append([ ], L, L).
+append([H|L1], L2, [H|L3]):- append(L1, L2, L3). 
+
+insert_sort(List,Sorted):-i_sort(List,[],Sorted).
+i_sort([],Acc,Acc).
+i_sort([[A$B$C$D|R]|T],Acc,Sorted):-insert([A$B$C$D|R],Acc,NAcc),i_sort(T,NAcc,Sorted).
+   
+insert([A$B$C$D|R],[[W$X$Y$Z|R2]|T],[[W$X$Y$Z|R2]|NT]):-D>Z,insert([A$B$C$D|R],T,NT).
+insert([A$B$C$D|R],[[W$X$Y$Z|R2]|T],[[A$B$C$D|R],[W$X$Y$Z|R2]|T]):-D=<Z.
+insert([A$B$C$D|R],[],[[A$B$C$D|R]]).
+
+successors([Dir$A$B$AH|Path], NewPaths):- findall([Dir1$B$Next$HR ,Dir$A$B$AH|Path],
+			    (connect(Dir1$B$Next$HR), not(member(Dir1$B$Next$HR,[Dir$A$B$AH|Path]))),
+			     NewPaths).
+
+astar([[E1$E2$E3$E4|Path]|_], [E1$E2$E3$E4|Path]) :- 
+                                        goal(E3).
+astar([Path|Paths], Full_Path) :-
+  successors(Path, NewPaths),
+   append(Paths, NewPaths, Queue),
+   insert_sort(Queue,Queue2),
+   astar(Queue2, Full_Path).
+
+

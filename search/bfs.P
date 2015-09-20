@@ -1,0 +1,20 @@
+/* Inbuilt member/2 function */
+member(X,[X|T]).
+member(X,[H|T]):- member(X,T).
+
+/* Inbuilt append/3 function */
+append([ ], L, L).
+append([H|L1], L2, [H|L3]):- append(L1, L2, L3). 
+
+/* successor function to generate non-repetitive successors */
+successors([S|Path], NewPaths):- findall([S2, Dir, S|Path],
+			    (connect(Dir, S, S2), not(member(S2,[S|Path]))),
+			     NewPaths).      
+/* bfs base clause to check the goal state */
+bfs([[S|Path]|_], [S|Path]) :- goal(_,S).
+
+/* recursive bfs with a queue to save the path */
+bfs([Path|Paths], Full_Path) :-
+  successors(Path, NewPaths),
+   append(Paths, NewPaths, Queue),
+   bfs(Queue, Full_Path).
